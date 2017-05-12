@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+	<!-- 配置User类的映射 -->
+	<class name="main.java.com.hj.shop.entity.User" table="user"  >
+		<!-- 如果entity实体类对应表的字段一样，column属性可以省略 -->
+		<id name="uid" column="uid" type="java.lang.Integer">
+			<generator class="native"></generator>
+		</id>
+		<property name="username" column="username" type="java.lang.String"></property>
+		<property name="password" column="password" type="java.lang.String"></property>
+		<property name="name" column="name" type="java.lang.String"></property>
+		<property name="email" column="email" type="java.lang.String"></property>
+		<property name="phone" column="phone" type="java.lang.String"></property>
+		<property name="addr" column="addr" type="java.lang.String"></property>
+		<property name="state" column="state" type="java.lang.Integer"></property>
+		<property name="code" column="code" type="java.lang.String"></property>
+		<property name="registertime" column="registertime" type="java.util.Date"></property>
+		
+		<set name="userOrderSet" cascade="delete" lazy="false" order-by="oid">
+			<key column="uid"></key>
+			<one-to-many class="main.java.com.hj.shop.entity.Order"></one-to-many>
+		</set>
+	</class>
+</hibernate-mapping>

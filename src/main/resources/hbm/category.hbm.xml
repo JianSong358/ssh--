@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    
+ <hibernate-mapping>
+ 	<!-- 一级分类的映射文件 -->
+ 	<class name="main.java.com.hj.shop.entity.Category" table="category">
+ 		<id name="cid">
+ 			<generator class="native"></generator>
+ 		</id>
+ 		<property name="cname"></property>
+ 		
+ 		<!-- 一级分类下面的所有二级分类    一对多的配置 -->
+ 		<set order-by="csid" cascade="delete" name="categorySecondSet" fetch="join" lazy="false">
+ 			<key column="cid"></key>
+ 			<one-to-many class="main.java.com.hj.shop.entity.CategorySecond"/>
+ 		</set>
+ 	</class>
+ </hibernate-mapping>

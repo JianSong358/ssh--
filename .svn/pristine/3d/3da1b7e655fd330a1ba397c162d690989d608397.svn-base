@@ -1,0 +1,247 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop" xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans.xsd
+	http://www.springframework.org/schema/context
+	http://www.springframework.org/schema/context/spring-context.xsd
+	http://www.springframework.org/schema/aop
+	http://www.springframework.org/schema/aop/spring-aop.xsd
+	http://www.springframework.org/schema/tx
+	http://www.springframework.org/schema/tx/spring-tx.xsd">
+
+	<!-- =========== c3p0 配置连接池 =========== -->
+	<bean id="ds" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		<property name="driverClass" value="com.mysql.jdbc.Driver"></property>
+		<property name="jdbcUrl" value="jdbc:mysql:///shop"></property>
+		<property name="user" value="root"></property>
+		<property name="password" value="root"></property>
+	</bean>
+
+
+	<!-- ============ Hibernate配置 =========== -->
+	<!-- SessionFactory 配置 -->
+	<bean id="sf"
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean">
+		<!-- 注入连接池 -->
+		<property name="dataSource" ref="ds"></property>
+
+		<!-- Hibernate的一些属性配置 -->
+		<property name="hibernateProperties">
+			<props>
+				<!-- 显示sql语句 -->
+				<prop key="hibernate.show_sql">true</prop>
+				<!-- 格式化sql语句 -->
+				<prop key="hibernate.format_sql">true</prop>
+				<!-- sql方言 -->
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<!-- -->
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+			</props>
+		</property>
+
+		<!-- hibernate映射配置 -->
+		<property name="mappingLocations">
+			<list>
+				<value>classpath:main/resources/hbm/user.hbm.xml</value>
+				<value>classpath:main/resources/hbm/category.hbm.xml</value>
+				<value>classpath:main/resources/hbm/categorySecond.hbm.xml</value>
+				<value>classpath:main/resources/hbm/product.hbm.xml</value>
+				<value>classpath:main/resources/hbm/order.hbm.xml</value>
+				<value>classpath:main/resources/hbm/orderitem.hbm.xml</value>
+				<value>classpath:main/resources/hbm/admin.hbm.xml</value>
+			</list>
+		</property>
+	</bean>
+
+
+	<!-- ============ 事务配置 ============= -->
+	<!-- 事务管理器 -->
+	<bean id="transactionManager"
+		class="org.springframework.orm.hibernate5.HibernateTransactionManager">
+		<!-- 注入 SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+
+	<!-- 开启事务的注解 -->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+
+	<!-- ================ Action 配置 ================ -->
+	<!-- 首页访问的Action -->
+	<bean id="indexAction" class="main.java.com.hj.shop.action.IndexAction"
+		scope="prototype">
+		<!-- 注入一级分类的categoryService -->
+		<property name="categoryService" ref="categoryService"></property>
+		<!-- 注入商品的productService -->
+		<property name="productService" ref="productService"></property>
+	</bean>
+
+	<!-- 验证码的Action -->
+	<bean id="checkImgAction" class="main.java.com.hj.shop.action.CheckImgAction"
+		scope="prototype"></bean>
+
+	<!-- 用户模块的Action -->
+	<bean id="userAction" class="main.java.com.hj.shop.action.UserAction"
+		scope="prototype">
+		<!-- 注入UserService -->
+		<property name="userService" ref="userService"></property>
+	</bean>
+
+	<!-- 商品模块的Action -->
+	<bean id="productAction" class="main.java.com.hj.shop.action.ProductAction"
+		scope="prototype">
+		<!-- 注入productService -->
+		<property name="productService" ref="productService"></property>
+	</bean>
+
+	<!-- 一级分类模块的Action -->
+	<bean id="categoryAction" class="main.java.com.hj.shop.action.CategoryAction"
+		scope="prototype">
+		<property name="categoryService" ref="categoryService"></property>
+	</bean>
+
+	<!-- 购物车的Action -->
+	<bean id="cartAction" class="main.java.com.hj.shop.action.CartAction"
+		scope="prototype">
+		<!-- 注入商品的Service -->
+		<property name="productService" ref="productService"></property>
+	</bean>
+
+	<!-- 订单的Action -->
+	<bean id="orderAction" class="main.java.com.hj.shop.action.OrderAction"
+		scope="prototype">
+		<!-- 注入OrderService -->
+		<property name="orderService" ref="orderService"></property>
+	</bean>
+	
+	<!-- 后台管理员的Action -->
+	<bean id="adminAction" class="main.java.com.hj.shop.action.admin.AdminAction" scope="prototype">
+		<!-- 注入AdminService -->
+		<property name="adminService" ref="adminService"></property>
+	</bean>
+	
+	<!-- 后台管理用户的Action -->
+	<bean id="adminUserAction" class="main.java.com.hj.shop.action.admin.AdminUserAction" scope="prototype">
+		<!-- 注入UserService -->
+		<property name="userService" ref="userService"></property>
+	</bean>
+	
+	
+	<!-- 后台一级分类操作的Action -->
+	<bean id="adminCategoryAction" class="main.java.com.hj.shop.action.admin.AdminCategoryAction" scope="prototype">
+		<!-- 注入一级分类的Service -->
+		<property name="categoryService" ref="categoryService"></property>
+	</bean>
+	
+	<!-- 后台二级分类操作的Action -->
+	<bean id="adminCategorySecondAction" class="main.java.com.hj.shop.action.admin.AdminCategorySecondAction" scope="prototype">
+		<!-- 注入二级分类的Service -->
+		<property name="categorySecondService" ref="categorySecondService"></property>
+		<!-- 注入一级分类的Service -->
+		<property name="categoryService" ref="categoryService"></property>
+	</bean>
+	
+	<!-- 后台商品管理的Action -->
+	<bean id="adminProductAction" class="main.java.com.hj.shop.action.admin.AdminProductAction" scope="prototype">
+		<!-- 注入商品的Service -->
+		<property name="productService" ref="productService"></property>
+		
+		<!-- 注入二级分类的 Service -->
+		<property name="categorySecondService" ref="categorySecondService"></property>
+	</bean>
+	
+	<!-- 后台订单管理的Action -->
+	<bean id="adminOrderAction" class="main.java.com.hj.shop.action.admin.AdminOrderAction" scope="prototype">
+		<!-- 注入OrderService -->
+		<property name="orderService" ref="orderService"></property>
+	</bean>
+	
+	
+	
+
+
+	<!-- =============== Service 配置 ================ -->
+	<!-- 用户模块Service -->
+	<bean id="userService" class="main.java.com.hj.shop.service.impl.UserServiceImpl">
+		<!-- 注入UserDao -->
+		<property name="userDao" ref="userDao"></property>
+	</bean>
+
+	<!-- 一级分类的Service -->
+	<bean id="categoryService" class="main.java.com.hj.shop.service.impl.CategoryServiceImpl">
+		<!-- 注入categoryDao -->
+		<property name="categoryDao" ref="categoryDao"></property>
+	</bean>
+	
+	<!-- 二级分类的Service -->
+	<bean id="categorySecondService" class="main.java.com.hj.shop.service.impl.CategorySecondServiceImpl">
+		<!-- 注入CategorySecondDao -->
+		<property name="categorySecondDao" ref="categorySecondDao"></property>
+	</bean>
+
+	<!-- 商品的Service -->
+	<bean id="productService" class="main.java.com.hj.shop.service.impl.ProductServiceImpl">
+		<property name="productDao" ref="productDao"></property>
+	</bean>
+
+	<!-- 订单的Service -->
+	<bean id="orderService" class="main.java.com.hj.shop.service.impl.OrderServiceImpl">
+		<!--注入OrderDao -->
+		<property name="orderDao" ref="orderDao"></property>
+	</bean>
+	
+	<!-- 后台管理员的Service -->
+	<bean id="adminService" class="main.java.com.hj.shop.service.impl.AdminServiceImpl">
+		<!--注入AdminDao -->
+		<property name="adminDao" ref="adminDao"></property>
+	</bean>
+	
+	
+
+
+
+
+	<!-- =============== Dao 配置 ===================== -->
+	<!-- 用户模块Dao -->
+	<bean id="userDao" class="main.java.com.hj.shop.dao.impl.UserDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf" />
+	</bean>
+
+	<!-- 一级分类的Dao -->
+	<bean id="categoryDao" class="main.java.com.hj.shop.dao.impl.CategoryDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+	
+	<!-- 二级分类的Dao -->
+	<bean id="categorySecondDao" class="main.java.com.hj.shop.dao.impl.CategorySecondDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+
+	<!-- 商品的Dao -->
+	<bean id="productDao" class="main.java.com.hj.shop.dao.impl.ProductDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+
+	<!-- 订单的Dao -->
+	<bean id="orderDao" class="main.java.com.hj.shop.dao.impl.OrderDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+	
+	<!-- 后台管理员的Dao -->
+	<bean id="adminDao" class="main.java.com.hj.shop.dao.impl.AdminDaoImpl">
+		<!-- 注入SessionFactory -->
+		<property name="sessionFactory" ref="sf"></property>
+	</bean>
+	
+	
+
+
+</beans>
+

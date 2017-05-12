@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    
+ <hibernate-mapping>
+ 	<!-- 订单的映射文件 -->
+ 	<class name="main.java.com.hj.shop.entity.Order" table="orders">
+ 		<id name="oid">
+ 			<generator class="native"></generator>
+ 		</id>
+ 		
+ 		<property name="total"></property>
+ 		<property name="ordertime"></property>
+ 		<property name="state"></property>
+ 		<property name="addr"></property>
+ 		<property name="name"></property>
+ 		<property name="phone"></property>
+ 		
+ 		<!-- 和用户多对一配置 ,一个用户可以有多个订单，一个订单只能属于一个用户 -->
+ 		<many-to-one name="user" class="main.java.com.hj.shop.entity.User" lazy="false" column="uid"></many-to-one>
+ 		
+ 		<!-- 和订单项一对多的配置，一个订单可以有多个订单项，一个订单项只能属于一个订单 -->
+ 		<set name="orderItemSet" order-by="itemid" lazy="false" cascade="save-update" >
+ 			<key column="oid"></key>
+ 			<one-to-many class="main.java.com.hj.shop.entity.OrderItem"/>
+ 		</set>
+ 	</class>
+ </hibernate-mapping>

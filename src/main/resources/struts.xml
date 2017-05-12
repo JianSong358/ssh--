@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE struts PUBLIC
+        "-//Apache Software Foundation//DTD Struts Configuration 2.5//EN"
+        "http://struts.apache.org/dtds/struts-2.5.dtd">
+<struts>
+	<!-- 开启通配符映射 -->
+	<constant name="struts.enable.DynamicMethodInvocation" value="true"/>
+		
+	<package name="shop" extends="struts-default" namespace="/">
+	
+		<!-- 配置自定义拦截器 -->
+		<interceptors>
+			<interceptor name="userInterceptor" class="main.java.com.hj.shop.interceptor.UserInterceptor"></interceptor>
+			<interceptor name="adminInterceptor" class="main.java.com.hj.shop.interceptor.AdminInterceptor"></interceptor>
+		</interceptors>
+	
+		<!-- 全局信息提示页面 -->
+		<global-results>
+			<result name="msg">/WEB-INF/main/msg.jsp</result>
+			<result name="login">/WEB-INF/main/login.jsp</result>
+			<result name="loginFial">/admin/index.jsp</result>
+		</global-results>
+		
+		
+		
+		<!-- 配置通配符映射 -->
+		<global-allowed-methods>regex:.*</global-allowed-methods>
+	
+		<!-- 首页访问的Action -->
+		<action name="index" class="indexAction">
+			<result name="index">/WEB-INF/main/index.jsp</result>
+		</action>
+		
+		<!-- 验证码的Action -->
+		<action name="checkImg" class="checkImgAction"></action>
+		
+		<!-- 用户模块的Action -->
+		<action name="user_*" class="userAction" method="{1}">
+			<result name="toRegister">/WEB-INF/main/register.jsp</result>
+			<result name="input">/WEB-INF/main/register.jsp</result>
+			<result name="toLogin">/WEB-INF/main/login.jsp</result>
+			<result name="loginSuccess" type="redirectAction">index</result>
+			<result name="quit" type="redirectAction">index</result>
+		</action>
+		
+		<!-- 商品模块的Action -->
+		<action name="product_*" class="productAction" method="{1}">
+			<result name="findByPid">/WEB-INF/main/product.jsp</result>
+		</action>
+		
+		<!-- 一级分类的Action -->
+		<action name="category_*" class="categoryAction" method="{1}">
+			<result name="findByCid">/WEB-INF/main/productList.jsp</result>
+			<result name="findByCsid">/WEB-INF/main/productList.jsp</result>
+		</action>
+		
+		<!-- 购物车的Action -->
+		<action name="cart_*" class="cartAction" method="{1}">
+			<result name="addCart">/WEB-INF/main/cart.jsp</result>
+			<result name="clearCart">/WEB-INF/main/cart.jsp</result>
+			<result name="removeCart">/WEB-INF/main/cart.jsp</result>
+			<result name="myCart">/WEB-INF/main/cart.jsp</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="userInterceptor"></interceptor-ref>
+			<!-- 传值 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 订单的Action -->
+		<action name="order_*" class="orderAction" method="{1}">
+			<result name="save">/WEB-INF/main/order.jsp</result>
+			<result name="findByUid">/WEB-INF/main/orderList.jsp</result>
+			<result name="findByOid">/WEB-INF/main/order.jsp</result>
+			<result name="updateState" type="redirectAction">order_findByUid.action?currentPage=1</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="userInterceptor"></interceptor-ref>
+			<!-- 传值 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 后台管理员的Action -->
+		<action name="admin_*" class="adminAction" method="{1}">
+			<result name="loginSuccess" type="redirect">/admin/home.jsp</result>
+		</action>
+		
+		<!-- 后台一级分类操作的Action -->
+		<action name="adminCategory_*" class="adminCategoryAction" method="{1}">
+			<result name="getAll">/admin/category/list.jsp</result>
+			<result name="save" type="redirectAction">adminCategory_findCategory</result>
+			<result name="delete" type="redirectAction">adminCategory_findCategory</result>
+			<result name="edit">/admin/category/edit.jsp</result>
+			<result name="update" type="redirectAction">adminCategory_findCategory</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="adminInterceptor"></interceptor-ref>
+			<!-- 传值 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 后台二级分类操作的Action -->
+		<action name="adminCategorySecond_*" class="adminCategorySecondAction" method="{1}">
+			<result name="findCategorySecond">/admin/categorysecond/list.jsp</result>
+			<result name="addCategorySecond">/admin/categorysecond/add.jsp</result>
+			<result name="save" type="redirectAction">adminCategorySecond_findCategorySecond.action?currentPage=1</result>
+			<result name="delete" type="redirectAction">adminCategorySecond_findCategorySecond.action?currentPage=1</result>
+			<result name="update" type="redirectAction">adminCategorySecond_findCategorySecond.action?currentPage=1</result>
+			<result name="edit">/admin/categorysecond/edit.jsp</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="adminInterceptor"></interceptor-ref>
+			<!-- 传值 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 后台商品管理的Action -->
+		<action name="adminProduct_*" class="adminProductAction" method="{1}">
+			<result name="findProduct">/admin/product/list.jsp</result>
+			<result name="addProduct">/admin/product/add.jsp</result>
+			<result name="save" type="redirectAction">adminProduct_findProduct.action?currentPage=1</result>
+			<result name="delete" type="redirectAction">adminProduct_findProduct.action?currentPage=1</result>
+			<result name="edit">/admin/product/edit.jsp</result>
+			<result name="update" type="redirectAction">adminProduct_findProduct.action?currentPage=1</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="adminInterceptor"></interceptor-ref>
+			<!-- 传值 -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		<!-- 后台订单管理的Action -->
+		<action name="adminOrder_*" class="adminOrderAction" method="{1}">
+			<result name="findOrder">/admin/order/list.jsp</result>
+			<result name="detail">/admin/order/detail.jsp</result>
+			<result name="updateState" type="redirectAction">adminOrder_findOrder.action?currentPage=1</result>
+			<!-- 配置自定义拦截器 -->
+			<interceptor-ref name="adminInterceptor"></interceptor-ref>
+			<!-- 传值  -->
+			<interceptor-ref name="defaultStack"></interceptor-ref>
+		</action>
+		
+		
+		<!-- 后台用户管理Action -->
+		<action name="userAdmin_*" class="adminUserAction" method="{1}">
+			<result name="findUser">/admin/user/list.jsp</result>
+			<result name="edit">/admin/user/edit.jsp</result>
+			<result name="update" type="redirectAction">userAdmin_findUser.action?currentPage=1</result>
+			<result name="delete" type="redirectAction">userAdmin_findUser.action?currentPage=1</result>
+			<interceptor-ref name="adminInterceptor"/>
+			<interceptor-ref name="defaultStack"/>
+		</action>
+	</package>
+</struts>

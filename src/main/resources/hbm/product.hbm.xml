@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC 
+    "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+    
+<hibernate-mapping>
+	<!-- 商品的映射文件 -->
+	<class name="main.java.com.hj.shop.entity.Product" table="product">
+		<id name="pid">
+			<generator class="native"></generator>
+		</id>
+		<property name="pname"></property>
+		<property name="market_price"></property>
+		<property name="shop_price"></property>
+		<property name="image"></property>
+		<property name="pdesc"></property>
+		<property name="is_hot"></property>
+		<property name="pdate"></property>
+		
+		<!-- 多对一的配置   商品和二级分类的关系 -->
+		<many-to-one name="categorySecond" lazy="false" class="main.java.com.hj.shop.entity.CategorySecond" column="csid"></many-to-one>
+	</class>
+</hibernate-mapping>
